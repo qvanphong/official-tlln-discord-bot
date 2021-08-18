@@ -28,7 +28,7 @@ class PriceAlert:
              'DASHUSDT': {'name': 'dash', 'value': None},
              'GASBTC': {'name': 'gas', 'value': None},
              'ARKBTC': {'name': 'ark', 'value': None},
-             }  # List of support coins
+             }  # List of support coins, name stand for correct coin name, value stand for latest price.
 
     def __init__(self, bot: commands.Bot):
         self.discord_bot = bot
@@ -106,8 +106,10 @@ class PriceAlert:
 
         return new_price_usd
 
+    # Update CoinBot's name.
     async def update_bot_name(self):
         while True:
+            # Save bot to self.bots dict if this is first time run.
             if len(self.bots) == 0:
                 guild = self.discord_bot.get_guild(env.SERVER_ID)
                 for pair, value in self.coins.items():
@@ -118,19 +120,19 @@ class PriceAlert:
                 price = self.coins[pair]['value']
                 if price is not None:
                     try:
-                        # if currency == 'USD':
                         await bot.edit(nick="${:.2f}".format(price))
-                        # else:
-                        #     await bot.edit(nick="${:.2f}".format(price * float(self.temp_btc["last_price"])))
                     except Exception as e:
                         print("Error occurs: ")
                         print(e)
             await asyncio.sleep(60)
 
-    # Start binance websocket, đồng thời load lại các dữ liệu giá cữ trước khi chạy
+    # Start binance websocket.
     async def start(self):
-        client = await tornado.websocket.websocket_connect(url=env.BINANCE_WS_URL)
+        # create update_bot_name task and run separate.
         self.discord_bot.loop.create_task(self.update_bot_name())
+
+        # Begin connect websocket and wait for new message.
+        client = await tornado.websocket.websocket_connect(url=env.BINANCE_WS_URL)
         while True:
             message = await client.read_message()
             if message is not None:
