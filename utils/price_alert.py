@@ -1,3 +1,4 @@
+import asyncio
 from discord import Embed, Member
 from discord.ext import commands
 
@@ -15,19 +16,18 @@ except ImportError:
 class PriceAlert:
     discord_bot = None  # Discord bot client
 
-    tick = 1  # represent for time read message
     difference_percentage = 5  # difference to trigger a message
 
     bots: [Member] = {}  # list of bots, use to rename
     temp_btc = {'coin_name': 'btc', 'last_price': '',
                 'time': ''}  # This will save BTC coin everytime, use to calculate BTC pair to USD
-    coins = {'NEOUSDT': 'neo',
-             'FIROUSDT': 'firo',
-             'BTCUSDT': 'btc',
-             'ZENUSDT': 'zen',
-             'DASHUSDT': 'dash',
-             'GASBTC': 'gas',
-             'ARKBTC': 'ark',
+    coins = {'NEOUSDT': {'name': 'neo', 'value': None},
+             'FIROUSDT': {'name': 'firo', 'value': None},
+             'BTCUSDT': {'name': 'btc', 'value': None},
+             'ZENUSDT': {'name': 'zen', 'value': None},
+             'DASHUSDT': {'name': 'dash', 'value': None},
+             'GASBTC': {'name': 'gas', 'value': None},
+             'ARKBTC': {'name': 'ark', 'value': None},
              }  # List of support coins
 
     def __init__(self, bot: commands.Bot):
@@ -38,15 +38,10 @@ class PriceAlert:
     async def on_message(self, message):
         json_message = json.loads(message)
         coin_pair = json_message["data"]["s"]
-        coin_name = self.coins[coin_pair]
+        coin_name = self.coins[coin_pair]['name']
         currency = "BTC" if "BTC" in coin_pair and coin_pair != "BTCUSDT" else "USD"
-        await self.send_alert(coin_name=coin_name, current_price_data=json_message, currency=currency)
-
-        if self.tick == 5:
-            await self.update_bot_name(json_message, currency)
-            self.tick = 1
-        else:
-            self.tick += 1
+        self.coins[coin_pair]['value'] = await self.send_alert(coin_name=coin_name, current_price_data=json_message,
+                                                               currency=currency)
 
     def check_price_change(self, old_price, current_price):
         difference = abs(old_price - current_price) / ((old_price + current_price) / 2) * 100
@@ -108,30 +103,35 @@ class PriceAlert:
                 .send(embed=embed_message)
 
             price_db.insert_to_db(coin_name, current_price, time)
-            return {'coin_name': coin_name, 'last_price': current_price, 'time': time}
 
-        return old_price
+        return new_price_usd
+
+    async def update_bot_name(self):
+        while True:
+            if len(self.bots) == 0:
+                guild = self.discord_bot.get_guild(env.SERVER_ID)
+                for pair, value in self.coins.items():
+                    bot = guild.get_member(util.get_bot_id(value['name']))
+                    self.bots[pair] = bot
+
+            for pair, bot in self.bots.items():
+                price = self.coins[pair]['value']
+                if price is not None:
+                    try:
+                        # if currency == 'USD':
+                        await bot.edit(nick="${:.2f}".format(price))
+                        # else:
+                        #     await bot.edit(nick="${:.2f}".format(price * float(self.temp_btc["last_price"])))
+                    except Exception as e:
+                        print("Error occurs: ")
+                        print(e)
+            await asyncio.sleep(60)
 
     # Start binance websocket, đồng thời load lại các dữ liệu giá cữ trước khi chạy
     async def start(self):
-
         client = await tornado.websocket.websocket_connect(url=env.BINANCE_WS_URL)
+        self.discord_bot.loop.create_task(self.update_bot_name())
         while True:
             message = await client.read_message()
-            await self.on_message(message)
-
-    async def update_bot_name(self, price_data, currency='USD'):
-        if len(self.bots) == 0:
-            guild = self.discord_bot.get_guild(env.SERVER_ID)
-
-            for pair, coin_name in self.coins.items():
-                bot = guild.get_member(util.get_bot_id(coin_name))
-                self.bots[pair] = bot
-
-        pair = price_data["data"]["s"]
-        price = float(price_data["data"]["c"])
-        bot = self.bots[pair]
-        if currency == 'USD':
-            await bot.edit(nick="${:.2f}".format(price))
-        else:
-            await bot.edit(nick="${:.2f}".format(price * float(self.temp_btc["last_price"])))
+            if message is not None:
+                await self.on_message(message)
