@@ -42,12 +42,11 @@ class PriceAlert:
         currency = "BTC" if "BTC" in coin_pair and coin_pair != "BTCUSDT" else "USD"
         await self.send_alert(coin_name=coin_name, current_price_data=json_message, currency=currency)
 
-        # Temporary disable update coin bot name. Since bot doesn't have permission
-        # if self.tick == 5:
-        #     await self.update_bot_name(json_message, currency)
-        #     self.tick = 1
-        # else:
-        #     self.tick += 1
+        if self.tick == 5:
+            await self.update_bot_name(json_message, currency)
+            self.tick = 1
+        else:
+            self.tick += 1
 
     def check_price_change(self, old_price, current_price):
         difference = abs(old_price - current_price) / ((old_price + current_price) / 2) * 100
