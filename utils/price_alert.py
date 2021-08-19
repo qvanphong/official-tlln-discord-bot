@@ -16,7 +16,8 @@ except ImportError:
 class PriceAlert:
     discord_bot = None  # Discord bot client
 
-    difference_percentage = 5  # difference to trigger a message
+    difference_percentage = env.PERCENTAGE_DIFFERENCE  # difference to trigger a message
+    update_nickname_interval = env.UPDATE_COINBOT_INTERVAL  # difference to trigger a message
 
     bots: [Member] = {}  # list of bots, use to rename
     temp_btc = {'coin_name': 'btc', 'last_price': '',
@@ -128,7 +129,7 @@ class PriceAlert:
                     except Exception as e:
                         print("Error occurs: ")
                         print(e)
-            await asyncio.sleep(60)
+            await asyncio.sleep(self.update_nickname_interval)
 
     # Start binance websocket.
     async def start(self):

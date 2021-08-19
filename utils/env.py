@@ -36,3 +36,6 @@ DASH_BOT_ID = int(os.environ.get("DashBotID"))
 
 PUMP_ICON = os.environ.get("PUMP_ICON")
 DUMP_ICON = os.environ.get("DUMP_ICON")
+
+PERCENTAGE_DIFFERENCE = int(os.environ.get("PERCENTAGE_DIFFERENCE"))
+UPDATE_COINBOT_INTERVAL = int(os.environ.get("UPDATE_COINBOT_INTERVAL"))
