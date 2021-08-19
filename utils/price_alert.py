@@ -21,13 +21,13 @@ class PriceAlert:
     bots: [Member] = {}  # list of bots, use to rename
     temp_btc = {'coin_name': 'btc', 'last_price': '',
                 'time': ''}  # This will save BTC coin everytime, use to calculate BTC pair to USD
-    coins = {'NEOUSDT': {'name': 'neo', 'value': None},
-             'FIROUSDT': {'name': 'firo', 'value': None},
-             'BTCUSDT': {'name': 'btc', 'value': None},
-             'ZENUSDT': {'name': 'zen', 'value': None},
-             'DASHUSDT': {'name': 'dash', 'value': None},
-             'GASBTC': {'name': 'gas', 'value': None},
-             'ARKBTC': {'name': 'ark', 'value': None},
+    coins = {'NEOUSDT': {'name': 'neo', 'value': 0.0},
+             'FIROUSDT': {'name': 'firo', 'value': 0.0},
+             'BTCUSDT': {'name': 'btc', 'value': 0.0},
+             'ZENUSDT': {'name': 'zen', 'value': 0.0},
+             'DASHUSDT': {'name': 'dash', 'value': 0.0},
+             'GASBTC': {'name': 'gas', 'value': 0.0},
+             'ARKBTC': {'name': 'ark', 'value': 0.0},
              }  # List of support coins, name stand for correct coin name, value stand for latest price.
 
     def __init__(self, bot: commands.Bot):
@@ -82,20 +82,24 @@ class PriceAlert:
 
         # If price status is PUMP (1) or DUMP (-1), then send a message
         if price_changed_status != 0:
-            message = "**{coin_name}** vừa {signal} {:.2f}% trên sàn Binance. " \
-                      "Từ **{:{prec}} USD** {up_down} **{:{prec}} USD**" \
-                .format(difference,
-                        float(old_price["last_price"]) if currency == 'USD' else old_price_usd,
-                        float(current_price) if currency == 'USD' else new_price_usd,
-                        coin_name=coin_name.upper(),
+            message = "**{coin_name}** vừa {signal} {icon}{difference:.2f}% trên sàn Binance. " \
+                .format(coin_name=coin_name.upper(),
                         signal="tăng" if price_changed_status == 1 else "giảm",
-                        up_down="lên" if price_changed_status == 1 else "xuống",
-                        prec=".2f")
+                        difference=difference,
+                        icon="↗" if price_changed_status == 1 else "↘",)
 
             embed_message = Embed(color=util.get_ember_color(price_changed_status), description=message)
             embed_message.set_author(name=util.get_alert_type(price_changed_status),
                                      icon_url=util.get_coin_image(coin_name))
             embed_message.set_thumbnail(url=util.get_coin_image(coin_name))
+
+            embed_message.add_field(name="Giá trước đó", value="**{:.2f} USD**".format(old_price_usd), inline=True)
+
+            embed_message.add_field(name="Giá hiện tại", value="**{:.2f} USD**".format(new_price_usd), inline=True)
+
+            embed_message.add_field(name="Thay đổi trong 24h",
+                                    value="**{}%**".format(current_price_data["data"]["P"]),
+                                    inline=False)
 
             await self.discord_bot \
                 .get_guild(env.SERVER_ID) \
@@ -117,10 +121,10 @@ class PriceAlert:
                     self.bots[pair] = bot
 
             for pair, bot in self.bots.items():
-                price = self.coins[pair]['value']
-                if price is not None:
+                price: float = self.coins[pair]['value']
+                if price is not None and price != 0.0:
                     try:
-                        await bot.edit(nick="${:.2f}".format(price))
+                        await bot.edit(nick="{name} ${price:.2f}".format(name=bot.name, price=price))
                     except Exception as e:
                         print("Error occurs: ")
                         print(e)
