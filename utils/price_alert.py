@@ -87,10 +87,10 @@ class PriceAlert:
                 .format(coin_name=coin_name.upper(),
                         signal="tăng" if price_changed_status == 1 else "giảm",
                         difference=difference,
-                        icon="↗" if price_changed_status == 1 else "↘",)
+                        icon="➚" if price_changed_status == 1 else "➘",)
 
             embed_message = Embed(color=util.get_ember_color(price_changed_status), description=message)
-            embed_message.set_author(name=util.get_alert_type(price_changed_status),
+            embed_message.set_author(name="Price alert",
                                      icon_url=util.get_coin_image(coin_name))
             embed_message.set_thumbnail(url=util.get_coin_image(coin_name))
 

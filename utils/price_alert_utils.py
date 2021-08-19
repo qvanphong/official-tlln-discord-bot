@@ -69,12 +69,6 @@ def get_ember_color(price_change_result):
     return 0xE1221D
 
 
-def get_alert_type(price_change_result):
-    if price_change_result == 1:
-        return "PUMP ALERT"
-    return "DUMP ALERT"
-
-
 def get_pump_dump_icon(price_change_result):
     if price_change_result == 1:
         return env.PUMP_ICON
