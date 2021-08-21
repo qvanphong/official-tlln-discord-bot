@@ -101,7 +101,7 @@ class PriceAlert:
         # If old price does exist, insert new one.
         if old_price_data is None:
             price_db.insert_to_db(coin_name, current_price, time)
-            old_price_data = price_db.get_coin_by_name(coin_name)
+            return
 
         # Convert BTC pair to USD
         if currency == 'BTC':
