@@ -29,6 +29,7 @@ class PriceAlert:
              'DASHUSDT': {'name': 'dash', 'value': 0.0},
              'GASBTC': {'name': 'gas', 'value': 0.0},
              'ARKBTC': {'name': 'ark', 'value': 0.0},
+             'ETHUSDT': {'name': 'eth', 'value': 0.0},
              }  # List of support coins, name stand for correct coin name, value stand for latest price.
 
     def __init__(self, bot: commands.Bot):
@@ -106,8 +107,6 @@ class PriceAlert:
                 .get_guild(env.SERVER_ID) \
                 .get_channel(util.get_channel_id(coin_name)) \
                 .send(embed=embed_message)
-
-            price_db.insert_to_db(coin_name, current_price, time)
 
         return new_price_usd
 
