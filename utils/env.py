@@ -17,6 +17,7 @@ ZEN_CHANNEL = int(os.environ.get("ZenChannel"))
 BTC_CHANNEL = int(os.environ.get("BitcoinChannel"))
 DASH_CHANNEL = int(os.environ.get("DashChannel"))
 SPAM_CHANNEL = int(os.environ.get("SpamChannel"))
+OTHER_COINS_CHANNEL = int(os.environ.get("OtherCoinsChannel"))
 
 NEO_IMAGE_URL = os.environ.get("NeoImageURL")
 GAS_IMAGE_URL = os.environ.get("GasImageURL")
