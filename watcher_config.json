@@ -1,0 +1,25 @@
+{
+  "neo_image_url": "https://assets.coingecko.com/coins/images/480/small/NEO_512_512.png?1594357361",
+  "gas_image_url": "https://assets.coingecko.com/coins/images/858/small/GAS_512_512.png?1594358948",
+  "ark_image_url": "https://assets.coingecko.com/coins/images/613/small/ark.png?1547034308",
+  "firo_image_url": "https://assets.coingecko.com/coins/images/479/small/firo.jpg?1606730284",
+  "zen_image_url": "https://assets.coingecko.com/coins/images/691/small/horizen.png?1555052241",
+  "btc_image_url": "https://assets.coingecko.com/coins/images/1/small/bitcoin.png?1547033579",
+  "dash_image_url": "https://assets.coingecko.com/coins/images/19/small/dash-logo.png?1548385930",
+  "eth_image_url": "https://assets.coingecko.com/coins/images/279/small/ethereum.png?1595348880",
+
+  "pump_icon": "https://image.flaticon.com/icons/png/512/564/564619.png",
+  "dump_icon": "https://image.flaticon.com/icons/png/512/564/564619.png",
+
+  "neo_bot_id": 877169153155424286,
+  "gas_bot_id": 877169938526273626,
+  "ark_bot_id": 877170043476144128,
+  "firo_bot_id": 877170244920152097,
+  "zen_bot_id": 877212604467138581,
+  "btc_bot_id": 877173498336915467,
+  "dash_bot_id": 877173748820758548,
+  "eth_bot_id": 877173626963652608,
+
+  "percentage_difference": 5,
+  "update_coinbot_interval": 60
+}

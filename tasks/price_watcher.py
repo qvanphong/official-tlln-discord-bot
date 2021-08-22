@@ -2,69 +2,48 @@ import asyncio
 from discord import Embed, Member
 from discord.ext import commands
 
-import repository.price_repository as price_db
-from utils import env, price_alert_utils as util
-from utils.price_alert_utils import  PriceStatus
-import tornado.websocket
-import json
+import repositories.price_repository as price_db
+from helpers import price_alert_utils as util, app_config, watcher_config, binance_service
+from helpers.price_alert_utils import PriceStatus
+
+from models.coin import Coin
 
 
-# try:
-#     import thread
-# except ImportError:
-#     import _thread as thread
-
-
-class PriceAlert:
+class PriceWatcher:
     # Discord bot client
     discord_bot = None
 
     # Difference to trigger a message
-    difference_percentage = env.PERCENTAGE_DIFFERENCE
+    difference_percentage = watcher_config.get_config("percentage_difference")
 
     # Difference to trigger a message
-    update_nickname_interval = env.UPDATE_COINBOT_INTERVAL
+    update_nickname_interval = watcher_config.get_config("update_coinbot_interval")
+
+    # server's id
+    server_id = app_config.get_config("server_id")
 
     # List of bots, use to rename
     bots: [Member] = {}
 
     # This will save BTC coin everytime,
     # use to calculate BTC pair to USD
-    temp_btc = {'coin_name': 'btc', 'last_price': ''}
+    btc_price = 0.0
 
     # Contains coin pair's information.
     # Name: normalize that coin's name
     # Value: latest price of this pair, but will save in USD if the pair is BTC
-    coins = {'NEOUSDT': {'name': 'neo', 'value': 0.0},
-             'FIROUSDT': {'name': 'firo', 'value': 0.0},
-             'BTCUSDT': {'name': 'btc', 'value': 0.0},
-             'ZENUSDT': {'name': 'zen', 'value': 0.0},
-             'DASHUSDT': {'name': 'dash', 'value': 0.0},
-             'GASBTC': {'name': 'gas', 'value': 0.0},
-             'ARKBTC': {'name': 'ark', 'value': 0.0},
-             'ETHUSDT': {'name': 'eth', 'value': 0.0},
+    coins = {'NEOUSDT': {'name': 'NEO', 'value': 0.0},
+             'FIROUSDT': {'name': 'FIRO', 'value': 0.0},
+             'BTCUSDT': {'name': 'BTC', 'value': 0.0},
+             'ZENUSDT': {'name': 'ZEN', 'value': 0.0},
+             'DASHUSDT': {'name': 'DASH', 'value': 0.0},
+             'GASBTC': {'name': 'GAS', 'value': 0.0},
+             'ARKBTC': {'name': 'ARK', 'value': 0.0},
+             'ETHUSDT': {'name': 'ETH', 'value': 0.0},
              }  # List of support coins, name stand for correct coin name, value stand for latest price.
 
     def __init__(self, bot: commands.Bot):
         self.discord_bot = bot
-
-    async def on_message(self, message):
-        """
-        Read Binance's wss message
-
-        :param message: raw JSON message from wss
-        """
-        price_data = json.loads(message)
-        coin_pair = price_data["data"]["s"]
-        coin_name = self.coins[coin_pair]['name']
-        currency = "BTC" if "BTC" in coin_pair and coin_pair != "BTCUSDT" else "USD"
-
-        # save btc price every second for convert USD
-        if coin_name == 'btc':
-            self.temp_btc['last_price'] = price_data["data"]["c"]
-
-        self.coins[coin_pair]['value'] = await self.compare_and_send(coin_name=coin_name, current_price_data=price_data,
-                                                                     currency=currency)
 
     def has_difference(self, old_price, current_price):
         """
@@ -84,30 +63,29 @@ class PriceAlert:
             pump_or_dump = PriceStatus.PUMP if old_price < current_price else PriceStatus.DUMP
             return [pump_or_dump, difference]
 
-    async def compare_and_send(self, coin_name: str, current_price_data: dict, currency='USD'):
+    async def compare_and_send(self, coin_name: str, coin_info: Coin, currency='USD'):
         """
         Compare the current_price_data with its old price,
         if there is a pump/dump then send a embed message to some channels
 
         :param coin_name: name of coins, passed from self.coins[]['name']
-        :param current_price_data:  price data from wss sending to and parsed to dict
+        :param coin_info:  price data from wss sending to and parsed to dict
         :param currency: BTC or USD base on their pair
         :return: a new price in USD.
         """
         old_price_data = price_db.get_coin_by_name(coin_name)
-        current_price = current_price_data["data"]["c"]
-        time = current_price_data["data"]["E"]
+        current_price = coin_info.price
 
         # If old price does exist, insert new one.
         if old_price_data is None:
-            price_db.insert_to_db(coin_name, current_price, time)
+            price_db.insert_to_db(coin_name, current_price, coin_info.time)
             return
 
         # Convert BTC pair to USD
         if currency == 'BTC':
-            if self.temp_btc["last_price"] != '':
-                old_price_usd = float(old_price_data["last_price"]) * float(self.temp_btc["last_price"])
-                new_price_usd = float(current_price) * float(self.temp_btc["last_price"])
+            if self.btc_price != 0.0:
+                old_price_usd = float(old_price_data["last_price"]) * float(self.btc_price)
+                new_price_usd = float(current_price) * float(self.btc_price)
             else:
                 return
         else:
@@ -118,11 +96,11 @@ class PriceAlert:
 
         # If price status is PUMP or DUMP, then send a message
         if price_status != PriceStatus.NOTHING:
-            price_db.insert_to_db(coin_name, current_price, time)
+            price_db.insert_to_db(coin_name, current_price, coin_info.time)
             await self.send_price_alert(coin_name=coin_name,
                                         old_price=old_price_usd,
                                         new_price=new_price_usd,
-                                        change_in_24=current_price_data["data"]["P"],
+                                        change_in_24=coin_info.change_24h,
                                         price_status=price_status,
                                         difference=difference)
         return new_price_usd
@@ -139,8 +117,6 @@ class PriceAlert:
         :param price_status: PriceStatus Enum. RePresent Pump or Dump or Nothing changed in price.
         :param difference: percentage difference.
         """
-        coin_channel = util.get_channel_id(coin_name)
-
         message = "**{coin_name}** vừa {signal} {icon}{difference:.2f}% trên sàn Binance. " \
             .format(coin_name=coin_name.upper(),
                     signal="tăng" if price_status == PriceStatus.PUMP else "giảm",
@@ -161,52 +137,64 @@ class PriceAlert:
                                 inline=False)
 
         # Send to specific coin channel
+        coin_channel = util.get_channel_id(coin_name)
         if coin_channel is not None:
             await self.discord_bot \
-                .get_guild(env.SERVER_ID) \
+                .get_guild(self.server_id) \
                 .get_channel(util.get_channel_id(coin_name)) \
                 .send(embed=embed_message)
 
         # Send to spam channel
         await self.discord_bot \
-            .get_guild(env.SERVER_ID) \
-            .get_channel(env.SPAM_CHANNEL) \
+            .get_guild(self.server_id) \
+            .get_channel(app_config.get_config("spam_channel")) \
             .send(embed=embed_message)
 
         # Send to other coins channel
         await self.discord_bot \
-            .get_guild(env.SERVER_ID) \
-            .get_channel(env.OTHER_COINS_CHANNEL) \
+            .get_guild(self.server_id) \
+            .get_channel(app_config.get_config("other_coins_channel")) \
             .send(embed=embed_message)
 
-    # Update CoinBot's name.
-    async def update_bot_name(self):
-        while True:
-            # Save bot to self.bots dict if this is first time run.
-            if len(self.bots) == 0:
-                guild = self.discord_bot.get_guild(env.SERVER_ID)
-                for pair, value in self.coins.items():
-                    bot = guild.get_member(util.get_bot_id(value['name']))
-                    self.bots[pair] = bot
+    async def update_bot_price(self, pair):
+        """
+        Update CoinBot's name as current price from self.coins data.
+        :param pair: coin's trading pair
+        """
 
-            for pair, bot in self.bots.items():
-                price: float = self.coins[pair]['value']
-                if bot is not None and price is not None and price != 0.0:
-                    try:
-                        await bot.edit(nick="{name} ${price:.2f}".format(name=bot.name, price=price))
-                    except Exception as e:
-                        print("Error occurs: ")
-                        print(e)
-            await asyncio.sleep(self.update_nickname_interval)
+        # Save bot to self.bots dict if this is first time run.
+        if len(self.bots) == 0:
+            guild = self.discord_bot.get_guild(self.server_id)
+            for pair, value in self.coins.items():
+                bot = guild.get_member(util.get_bot_id(value['name']))
+                self.bots[pair] = bot
 
-    # Start binance websocket.
-    async def start(self):
-        # create update_bot_name task and run separate.
-        self.discord_bot.loop.create_task(self.update_bot_name())
+        bot = self.bots[pair]
+        price: float = self.coins[pair]['value']
+        if bot is not None and price is not None and price != 0.0:
+            try:
+                await bot.edit(nick="{name} ${price:.2f}".format(name=bot.name, price=price))
+            except Exception as e:
+                print(f"Error occurs: {e}")
 
-        # Begin connect websocket and wait for new message.
-        client = await tornado.websocket.websocket_connect(url=env.BINANCE_WS_URL)
-        while True:
-            message = await client.read_message()
-            if message is not None:
-                await self.on_message(message)
+    async def check_and_update_bot_name(self):
+        """
+        Check the current of every coin pair,
+        send Price alert if there is difference equal or greater than config's value
+        """
+        for pair, value in self.coins.items():
+            coin_info = binance_service.fetch_data(coin_pair=pair)
+
+            if coin_info is not None:
+                coin_name = value["name"]
+                currency = "BTC" if "BTC" in coin_info.symbol and coin_info.symbol != "BTCUSDT" else "USD"
+
+                # save btc price every second for convert to USD in any BTC pair
+                if coin_name == "BTC":
+                    self.btc_price = coin_info.price
+
+                value['value'] = await self.compare_and_send(coin_name=coin_name,
+                                                             coin_info=coin_info,
+                                                             currency=currency)
+
+                await self.update_bot_price(pair=pair)

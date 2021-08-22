@@ -1,0 +1,14 @@
+{
+  "token": "YOUR_BOT_TOKEN",
+  "cmc_key": "YOUR_COINMARKETCAP_TOKEN",
+
+  "server_id": 877141825947861014,
+  "neo_channel": 877141826476331030,
+  "ark_channel": 877141826476331030,
+  "firo_channel": 877141826476331030,
+  "zen_channel": 877141826476331030,
+  "btc_channel": 877141826476331030,
+  "dash_channel": 877141826476331030,
+  "other_coins_channel": 878465988201422940,
+  "spam_channel": 878465973341003777
+}
