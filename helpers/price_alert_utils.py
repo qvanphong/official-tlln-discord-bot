@@ -1,4 +1,4 @@
-from helpers import watcher as watcher
+from helpers import watcher_config as watcher
 from helpers import app_config as app
 from enum import Enum
 
