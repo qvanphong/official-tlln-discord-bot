@@ -17,9 +17,9 @@ class CoinGeckoHelper():
         if symbol in self.coin_list:
             # coin_data = self.coingecko.get_price(ids=self.coin_list[symbol],
             #                                      vs_currencies='usd',
-            #                                      include_market_cap=True,
-            #                                      include_24hr_vol=True,
-            #                                      include_24hr_change=True,
+            #                o                      include_market_cap=True,
+            #               /|\                     include_24hr_vol=True,
+            #               /\                      include_24hr_change=True,
             #                                      include_last_updated_at=True)
             coin_data = self.coingecko.get_coin_by_id(id=self.coin_list[symbol],
                                                       localization='false',
