@@ -31,7 +31,7 @@ class PriceCheck(commands.Cog, name="price_check"):
                               else f"**{result.name}** được xếp hạng **#{result.rank}** trên CoinGecko") \
                     .set_author(name=f"{result.name} ({result.symbol})",
                                 icon_url=result.thumbnail) \
-                    .set_thumbnail(url=result.thumbnail) \
+                    .set_thumbnail(url=result.large_image) \
                     .set_footer(text=f"Cập nhật lần cuối {result.last_updated}",
                                 icon_url="https://static.coingecko.com/s/coingecko-logo-d13d6bcceddbb003f146b33c2f7e8193d72b93bb343d38e392897c3df3e78bdd.png")
 

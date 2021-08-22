@@ -3,6 +3,7 @@ class CoinGeckoCoin:
     symbol = ""
     rank = ""
     thumbnail = ""
+    large_image = ""
 
     price = ""
     ath = ""
@@ -22,6 +23,7 @@ class CoinGeckoCoin:
         self.symbol = coingecko_response['symbol'].upper()
         self.rank = coingecko_response['market_cap_rank']
         self.thumbnail = coingecko_response['image']['thumb']
+        self.large_image = coingecko_response['image']['large']
 
         self.price = f"{coingecko_response['market_data']['current_price']['usd']:,} USD"
         self.ath = f"{coingecko_response['market_data']['ath']['usd']:,} USD"
