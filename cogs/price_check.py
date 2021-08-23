@@ -35,8 +35,9 @@ class PriceCheck(commands.Cog, name="price_check"):
                     .set_footer(text=f"Cập nhật lần cuối {result.last_updated}",
                                 icon_url="https://static.coingecko.com/s/coingecko-logo-d13d6bcceddbb003f146b33c2f7e8193d72b93bb343d38e392897c3df3e78bdd.png")
 
-                embed.add_field(name="Chi tiết", value=f"Vốn hóa: {result.total_volume}\n"
-                                                       f"Tổng cung: {result.total_supply}", inline=False)
+                embed.add_field(name="Chi tiết", value=f"Vốn hóa: {result.market_cap}\n"
+                                                       f"Tổng cung: {result.total_supply}"
+                                                       f"Khối lượng giao dịch: {result.total_volume}", inline=False)
 
                 embed.add_field(name="Giá", value=f"Hiện tại: {result.price}\n"
                                                   f"ATH: {result.ath}", inline=True)
