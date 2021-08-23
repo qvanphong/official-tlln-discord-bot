@@ -30,9 +30,9 @@ class CoinGeckoCoin:
         self.ath = f"${coingecko_response['market_data']['ath']['usd']:,} USD"
 
         self.market_cap = f"${coingecko_response['market_data']['market_cap']['usd']:,} USD"
-        self.change_in_day = f"{coingecko_response['market_data']['price_change_percentage_24h']}%"
-        self.change_in_week = f"{coingecko_response['market_data']['price_change_percentage_7d']}%"
-        self.change_in_month = f"{coingecko_response['market_data']['price_change_percentage_30d']}%"
+        self.change_in_day = f"{coingecko_response['market_data']['price_change_percentage_24h']:.2f}%"
+        self.change_in_week = f"{coingecko_response['market_data']['price_change_percentage_7d']:.2f}%"
+        self.change_in_month = f"{coingecko_response['market_data']['price_change_percentage_30d']:.2f}%"
 
         total_supply = "∞" if coingecko_response['market_data']['total_supply'] is None else \
             f"{int(coingecko_response['market_data']['total_supply']):,}"
