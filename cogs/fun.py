@@ -45,12 +45,12 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
     @commands.command(name="e",
                       brief="Lấy ảnh kích của emoji")
     async def emoji(self, ctx, emoji):
-        emoji_pattern = r"<@?:\S*:([0-9]*)>"
+        emoji_pattern = r"<a?:\S*:([0-9]*)>"
         match = re.search(emoji_pattern, emoji)
 
         if match is not None:
             emoji_id = int(match.group(1))
-            file_type = "gif" if emoji[1] == "@" else "png"
+            file_type = "gif" if emoji[1] == "a" else "png"
             await ctx.send(f"https://cdn.discordapp.com/emojis/{emoji_id}.{file_type}")
 
 
