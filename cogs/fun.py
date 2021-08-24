@@ -29,7 +29,7 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
                       description="VD: !ava @Phong")
     async def avatar(self, ctx, user):
         # Normal string, no user tagged
-        if "<!" not in user:
+        if "<@" not in user:
             await self.bot.on_command_error(ctx,
                                             commands.errors.MissingRequiredArgument(Parameter(name="user",
                                                                                               kind=Parameter.KEYWORD_ONLY)))
