@@ -58,7 +58,8 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.errors.CheckFailure):
         pass
     elif isinstance(error, commands.errors.MissingRequiredArgument):
-        await ctx.send(f"Câu lệnh vừa nhập không hợp lệ, hãy gõ `!help {ctx.invoked_with}` để xem chi tiết")
+        await ctx.send(f"Câu lệnh bị thiếu giá trị `<{error.param.name}>` hoặc không hợp lệ, "
+                       f"hãy gõ `!help {ctx.invoked_with}` để xem chi tiết")
     else:
         print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)

@@ -52,6 +52,10 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
             emoji_id = int(match.group(1))
             file_type = "gif" if emoji[1] == "a" else "png"
             await ctx.send(f"https://cdn.discordapp.com/emojis/{emoji_id}.{file_type}")
+        else:
+            await self.bot.on_command_error(ctx,
+                                            commands.errors.MissingRequiredArgument(Parameter(name="emoji",
+                                                                                              kind=Parameter.KEYWORD_ONLY)))
 
 
 def setup(bot):
