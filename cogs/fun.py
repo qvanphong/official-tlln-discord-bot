@@ -57,6 +57,19 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
                                             commands.errors.MissingRequiredArgument(Parameter(name="emoji",
                                                                                               kind=Parameter.KEYWORD_ONLY)))
 
+    @commands.command(name="dh",
+                      brief="Tài liệu Duy Huỳnh")
+    async def duy_huynh(self, ctx):
+        await ctx.send(">>> Tài liệu mới nhất của Duy Huỳnh:"
+                       "https://cdn.discordapp.com/attachments/813452767099355136/859710887387987988"
+                       "/DUY_HUYNH_By_Category.pdf")
+
+    @commands.command(name="tailieu",
+                      brief="Tài liệu đọc để Trở Lại Làm Người")
+    async def tailieu(self, ctx):
+        await ctx.send(">>> Tài liệu về Stoic, Carl Jung, Duy Huỳnh, Nguyễn Duy Cần,... trên Trở lại làm người:"
+                       "https://www.facebook.com/permalink.php?story_fbid=112580303705418&id=109294147367367")
+
 
 def setup(bot):
     bot.add_cog(FunCog(bot))
