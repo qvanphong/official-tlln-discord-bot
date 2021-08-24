@@ -17,9 +17,9 @@ class PriceCheck(commands.Cog, name="Check giá"):
     async def on_message(self, message):
         if global_checker.from_config_server(message):
 
-            match = re.search(r"^\?([a-zA-Z0-9]*)$", message.content, re.IGNORECASE)
-            if match is not None and match.group(1) is not None:
-                coin_name = match.group(1).lower()
+            price_query_match = re.search(r"^\?([a-zA-Z0-9]*)$", message.content, re.IGNORECASE)
+            if price_query_match is not None and price_query_match.group(1) is not None:
+                coin_name = price_query_match.group(1).lower()
                 result = self.coingecko_helper.fetch_coin_info(coin_name)
 
                 if result is None:
@@ -30,6 +30,14 @@ class PriceCheck(commands.Cog, name="Check giá"):
                                     icon_url=result.thumbnail) \
                         .set_footer(text=f"Sử dụng !mk {coin_name} để xem thêm chi tiết")
                     await message.channel.send(embed=embed)
+            else:
+                rate_match = re.search(r"^([0-9]*(\.[0-9]*)?)\s*([a-zA-Z0-9]*)\s*=\s*(\?|bn)\s*([a-zA-Z0-9]*)$",
+                                       message.content)
+                if rate_match is not None:
+                    await self.coin_rate(message.channel,
+                                         float(rate_match.group(1)),
+                                         rate_match.group(3),
+                                         rate_match.group(5))
 
     @commands.command(name="mk",
                       brief="Lấy thông tin thị trường của 1 coin cụ thể",
@@ -65,10 +73,27 @@ class PriceCheck(commands.Cog, name="Check giá"):
 
             await ctx.send(embed=embed)
 
+    @commands.command(name="rate",
+                      brief="Chuyển đổi rate giữa 2 coin khác nhau.",
+                      description="Command này tương tự như xxx coin_a = coin_b.\n"
+                                  "VD: !rate 10 gas neo (tương tự 10 gas = ? neo)\n"
+                                  "VD: !rate gas neo (tương tự 1 gas = ? neo)")
+    async def coin_rate(self, ctx, amount: Optional[float] = 1.0, coin_a="", coin_b=""):
+        rate = self.coingecko_helper.get_coin_rate(amount, coin_a, coin_b)
+        if rate is not None:
+            embed = Embed(color=0x0DDEFB)
+
+            embed.add_field(name=f"Rate {coin_a.upper()}/{coin_b.upper()}",
+                            value=f"{amount} {coin_a.upper()} = {rate:.2f} {coin_b.upper()}", inline=True)
+
+            await ctx.send(embed=embed)
+        else:
+            await ctx.send("Coin nhập vào không hợp lệ")
+
     @commands.command(name="dmn",
                       brief="Lấy dominance của Bitcoin")
     async def btc_dominance(self, ctx):
-        dominance = self.coingecko_helper.get_global()
+        dominance = self.coingecko_helper.get_global_info()
         embed = Embed(color=0x0DDEFB)
         embed.set_author(name="Bitcoin Dominance")
 

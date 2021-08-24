@@ -33,6 +33,15 @@ class CoinGeckoHelper():
             return CoinGeckoCoin().from_advanced(coin_data)
         return None
 
-    def get_global(self) -> BTCDominance:
+    def get_global_info(self) -> BTCDominance:
         coin_data = self.coingecko.get_global()
         return BTCDominance(coin_data)
+
+    def get_coin_rate(self, coin_a_amount, coin_a, coin_b):
+        result = self.coingecko.get_price(ids=[coin_a, coin_b], vs_currencies='usd')
+        if result[coin_a] is None:
+            return None
+        elif result[coin_b] is None:
+            return None
+
+        return coin_a_amount * result[coin_a]['usd'] / result[coin_b]['usd']
