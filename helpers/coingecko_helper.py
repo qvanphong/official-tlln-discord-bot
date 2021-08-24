@@ -3,7 +3,7 @@ from typing import Optional
 from pycoingecko import CoinGeckoAPI
 
 from models.coingecko_coin import CoinGeckoCoin
-from models.dominance import BTCDominance
+from models.btc_dominance import BTCDominance
 
 
 class CoinGeckoHelper():
@@ -30,7 +30,7 @@ class CoinGeckoHelper():
                                                       developer_data=False,
                                                       sparkline=False)
 
-            return CoinGeckoCoin(coin_data)
+            return CoinGeckoCoin().from_advanced(coin_data)
         return None
 
     def get_global(self) -> BTCDominance:
