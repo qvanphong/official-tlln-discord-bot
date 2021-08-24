@@ -79,7 +79,7 @@ class PriceCheck(commands.Cog, name="Check giá"):
                                   "VD: !rate 10 gas neo (tương tự 10 gas = ? neo)\n"
                                   "VD: !rate gas neo (tương tự 1 gas = ? neo)")
     async def coin_rate(self, ctx, amount: Optional[float] = 1.0, coin_a="", coin_b=""):
-        rate = self.coingecko_helper.get_coin_rate(amount, coin_a, coin_b)
+        rate = self.coingecko_helper.get_coin_rate(amount, coin_a.lower(), coin_b.lower())
         if rate is not None:
             embed = Embed(color=0x0DDEFB)
 
