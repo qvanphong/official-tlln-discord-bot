@@ -14,6 +14,9 @@ class CoinGeckoHelper():
         for coin in self.coingecko.get_coins_list():
             self.coin_list[coin['symbol']] = coin['id']
 
+        self.coin_list['usd'] = 'tether'
+        self.coin_list['vnd'] = 'binance-vnd'
+
     def fetch_coin_info(self, symbol) -> Optional[CoinGeckoCoin]:
         if symbol in self.coin_list:
             # coin_data = self.coingecko.get_price(ids=self.coin_list[symbol],
