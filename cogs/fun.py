@@ -43,7 +43,7 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
             await ctx.send(avatar)
 
     @commands.command(name="e",
-                      brief="Lấy ảnh kích của emoji")
+                      brief="Lấy ảnh kích thước lớn của emoji")
     async def emoji(self, ctx, emoji):
         emoji_pattern = r"<a?:\S*:([0-9]*)>"
         match = re.search(emoji_pattern, emoji)
