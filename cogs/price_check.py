@@ -18,7 +18,7 @@ class PriceCheck(commands.Cog, name="Check giá"):
 
             match = re.search(r"^\?([a-zA-Z0-9]*)$", message.content, re.IGNORECASE)
             if match is not None and match.group(1) is not None:
-                coin_name = match.group(1)
+                coin_name = match.group(1).lower()
                 result = self.coingecko_helper.fetch_coin_info(coin_name)
 
                 if result is None:
@@ -35,7 +35,7 @@ class PriceCheck(commands.Cog, name="Check giá"):
                       description="Nhập tên 1 coin cụ thể để lấy thông tin về thị trường của coin đó.\n"
                                   "VD: !mk neo")
     async def market_info(self, ctx, coin_name):
-        result = self.coingecko_helper.fetch_coin_info(coin_name)
+        result = self.coingecko_helper.fetch_coin_info(coin_name.lower())
 
         if result is None:
             await ctx.send(f"Không tìm thấy coin {coin_name}")
