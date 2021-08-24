@@ -1,4 +1,6 @@
 import random
+import re
+from inspect import Parameter
 
 from discord import Embed
 from discord.ext import commands
@@ -21,6 +23,35 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
         embed.add_field(name="Kết quả:", value=result)
 
         await ctx.send(embed=embed)
+
+    @commands.command(name="ava",
+                      brief="Lấy avatar của người được tag",
+                      description="VD: !ava @Phong")
+    async def avatar(self, ctx, user):
+        # Normal string, no user tagged
+        if "<!" not in user:
+            await self.bot.on_command_error(ctx,
+                                            commands.errors.MissingRequiredArgument(Parameter(name="user",
+                                                                                              kind=Parameter.KEYWORD_ONLY)))
+            return
+        if len(ctx.message.mentions) == 0:
+            await ctx.send("`Không tìm thấy người được tag`")
+        else:
+            user_tagged = ctx.message.mentions[0]
+            avatar = user_tagged.avatar_url
+
+            await ctx.send(avatar)
+
+    @commands.command(name="e",
+                      brief="Lấy ảnh kích của emoji")
+    async def emoji(self, ctx, emoji):
+        emoji_pattern = r"<@?:\S*:([0-9]*)>"
+        match = re.search(emoji_pattern, emoji)
+
+        if match is not None:
+            emoji_id = int(match.group(1))
+            file_type = "gif" if emoji[1] == "@" else "png"
+            await ctx.send(f"https://cdn.discordapp.com/emojis/{emoji_id}.{file_type}")
 
 
 def setup(bot):

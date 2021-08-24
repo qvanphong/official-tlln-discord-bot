@@ -16,11 +16,15 @@ intents.members = True  # Subscribe to the privileged members intent.
 intents.guilds = True
 intents.messages = True
 
+initial_cog = [
+    "cogs.fun",
+    "cogs.price_check"
+]
+
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-bot.load_extension("cogs.fun")
-
-bot.load_extension("cogs.price_check")
+for cog in initial_cog:
+    bot.load_extension(cog)
 
 price_watcher: PriceWatcher = None
 
@@ -53,6 +57,8 @@ async def from_config_server(ctx):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.errors.CheckFailure):
         pass
+    elif isinstance(error, commands.errors.MissingRequiredArgument):
+        await ctx.send(f"Câu lệnh vừa nhập không hợp lệ, hãy gõ `!help {ctx.invoked_with}` để xem chi tiết")
     else:
         print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
