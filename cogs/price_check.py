@@ -63,8 +63,17 @@ class PriceCheck(commands.Cog, name="Check giá"):
 
             await ctx.send(embed=embed)
 
-    def bot_check(self, ctx):
-        return global_checker.from_config_server(ctx)
+    @commands.command(name="dmn",
+                      brief="Lấy dominance của Bitcoin")
+    async def btc_dominance(self, ctx):
+        dominance = self.coingecko_helper.get_global()
+        embed = Embed(color=0x0DDEFB)
+        embed.set_author(name="Bitcoin Dominance")
+
+        embed.add_field(name="Dominance", value=dominance.percentage, inline=True)
+        embed.add_field(name="Thay đổi trong 24h", value=dominance.percentage_change_24h, inline=True)
+
+        await ctx.send(embed=embed)
 
 
 def setup(bot):
