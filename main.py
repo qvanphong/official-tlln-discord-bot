@@ -5,9 +5,9 @@ import traceback
 
 import discord
 from discord.ext import commands, tasks
+from pretty_help import PrettyHelp, DefaultMenu
 
 from checkers import global_checker
-from cogs import price_check
 from helpers import app_config, watcher_config
 from tasks.price_watcher import PriceWatcher
 
@@ -27,6 +27,17 @@ for cog in initial_cog:
     bot.load_extension(cog)
 
 price_watcher: PriceWatcher = None
+
+menu = DefaultMenu('◀️', '▶️', '❌', 10)
+
+bot.help_command = PrettyHelp(navigation=menu,
+                              color=discord.Colour.green(),
+                              index_title="Danh mục (Categories)",
+                              no_category="Không có tên danh mục",
+                              ending_note="Gõ !help command để xem thêm thông tin 1 câu lệnh cụ thể\n"
+                                          "Gõ !help category để xem các lệnh trong danh mục đó",
+                              show_hidden=False,
+                              show_index=True)
 
 
 @bot.event

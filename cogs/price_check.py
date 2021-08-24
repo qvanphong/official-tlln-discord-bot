@@ -8,7 +8,7 @@ from checkers import global_checker
 from helpers.coingecko_helper import CoinGeckoHelper
 
 
-class PriceCheck(commands.Cog, name="Check giá"):
+class PriceCheck(commands.Cog, name="Check giá", description="Các lệnh lấy thông tin giá, thị trường coin"):
     def __init__(self, bot):
         self.bot = bot
         self.coingecko_helper = CoinGeckoHelper()
