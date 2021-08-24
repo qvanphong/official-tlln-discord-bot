@@ -9,7 +9,10 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="pick", description="Chọn ngẫu nhiên các giá trị nhập vào")
+    @commands.command(name="pick",
+                      brief="Chọn ngẫu nhiên các giá trị nhập vào",
+                      description="Chọn ngẫu nhiên bằng cách nhập các lựa chọn, được cách nhau bởi dấu \",\"\n"
+                                  "VD: !pick ARK lên 30$, ARK stable coin")
     async def pick(self, ctx, *, arg):
         args = arg.split(',')
         result = args[random.randint(0, len(args) - 1)]

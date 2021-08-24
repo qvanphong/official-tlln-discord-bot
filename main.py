@@ -15,7 +15,12 @@ intents = discord.Intents.default()
 intents.members = True  # Subscribe to the privileged members intent.
 intents.guilds = True
 intents.messages = True
+
 bot = commands.Bot(command_prefix='!', intents=intents)
+
+bot.load_extension("cogs.fun")
+
+bot.load_extension("cogs.price_check")
 
 price_watcher: PriceWatcher = None
 
@@ -27,9 +32,6 @@ async def on_ready():
     print(f"Python version: {platform.python_version()}")
     print(f"Running on: {platform.system()} {platform.release()} ({os.name})")
     print("-------------------")
-
-    # Add cogs
-    bot.add_cog(price_check.PriceCheck(bot))
 
     global price_watcher
     price_watcher = PriceWatcher(bot=bot)

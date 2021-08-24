@@ -30,7 +30,10 @@ class PriceCheck(commands.Cog, name="Check giá"):
                         .set_footer(text=f"Sử dụng !mk {coin_name} để xem thêm chi tiết")
                     await message.channel.send(embed=embed)
 
-    @commands.command(name="mk")
+    @commands.command(name="mk",
+                      brief="Lấy thông tin thị trường của 1 coin cụ thể",
+                      description="Nhập tên 1 coin cụ thể để lấy thông tin về thị trường của coin đó.\n"
+                                  "VD: !mk neo")
     async def market_info(self, ctx, coin_name):
         result = self.coingecko_helper.fetch_coin_info(coin_name)
 
@@ -62,3 +65,7 @@ class PriceCheck(commands.Cog, name="Check giá"):
 
     def bot_check(self, ctx):
         return global_checker.from_config_server(ctx)
+
+
+def setup(bot):
+    bot.add_cog(PriceCheck(bot))
