@@ -38,10 +38,13 @@ class CoinGeckoHelper():
         return BTCDominance(coin_data)
 
     def get_coin_rate(self, coin_a_amount, coin_a, coin_b):
-        result = self.coingecko.get_price(ids=[coin_a, coin_b], vs_currencies='usd')
-        if result[coin_a] is None:
+        if coin_a not in self.coin_list:
             return None
-        elif result[coin_b] is None:
+        if coin_b not in self.coin_list:
             return None
 
+        coin_a = self.coin_list[coin_a]
+        coin_b = self.coin_list[coin_b]
+
+        result = self.coingecko.get_price(ids=[coin_a, coin_b], vs_currencies='usd')
         return coin_a_amount * result[coin_a]['usd'] / result[coin_b]['usd']

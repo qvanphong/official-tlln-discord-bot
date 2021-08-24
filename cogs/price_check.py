@@ -17,7 +17,7 @@ class PriceCheck(commands.Cog, name="Check giá"):
     async def on_message(self, message):
         if global_checker.from_config_server(message):
 
-            price_query_match = re.search(r"^\?([a-zA-Z0-9]*)$", message.content, re.IGNORECASE)
+            price_query_match = re.search(r"^\?([a-zA-Z0-9]+)$", message.content, re.IGNORECASE)
             if price_query_match is not None and price_query_match.group(1) is not None:
                 coin_name = price_query_match.group(1).lower()
                 result = self.coingecko_helper.fetch_coin_info(coin_name)
@@ -31,7 +31,7 @@ class PriceCheck(commands.Cog, name="Check giá"):
                         .set_footer(text=f"Sử dụng !mk {coin_name} để xem thêm chi tiết")
                     await message.channel.send(embed=embed)
             else:
-                rate_match = re.search(r"^([0-9]*(\.[0-9]*)?)\s*([a-zA-Z0-9]*)\s*=\s*(\?|bn)\s*([a-zA-Z0-9]*)$",
+                rate_match = re.search(r"^([1-9]+(\.[0-9]*)?)\s*([a-zA-Z0-9]+)\s*=\s*(\?|bn)\s*([a-zA-Z0-9]+)$",
                                        message.content)
                 if rate_match is not None:
                     await self.coin_rate(message.channel,
