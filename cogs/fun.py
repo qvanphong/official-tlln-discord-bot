@@ -78,32 +78,44 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
     @commands.command(name="randomcuck", brief="Random Cục", hidden=True)
     @commands.check_any(global_checker.is_dev(), global_checker.is_mod())
     async def random_cuck(self, ctx: commands.Context, amount=1):
+        if amount > 10:
+            await ctx.send("vl! Ông định giết cả box này à <:angry:776921998999027733><:sung:827892224851312651>")
+            return
+
         role = discord.utils.get(ctx.message.guild.roles, id=app_config.get_config("spammer_role"))
         if role is not None:
-            latest_message = await ctx.channel.history(limit=200).flatten()
+            users = []
             selected_members = []
 
-            for i in range(amount):
+            # Add user to list.
+            async for message in ctx.channel.history(limit=200):
+                if message.author != ctx.bot.user and message not in users:
+                    users.append(message.author)
+
+            if len(users) <= amount:
+                selected_members = users
+            else:
+                for i in range(amount):
+                    selected_member = random.choice(users)
+                    while selected_member in selected_members:
+                        selected_member = random.choice(users)
+
+                    selected_members.append(selected_member)
+                    users.remove(selected_member)
+
+            for member in selected_members:
                 # Random minutes from 10 ~ 30
                 period_time = random.randint(app_config.get_config("min_spammer_role_period"),
                                              app_config.get_config("max_spammer_role_period"))
-                member = random.choice(latest_message).author
-
-                # Don't select bot
-                while member.id == ctx.bot.user.id or member.id in selected_members:
-                    member = random.choice(latest_message).author
-
-                # Add to selected_members array to prevent duplicate selection
-                selected_members.append(member.id)
 
                 await member.add_roles(role)
 
                 spammer_repository.save_spammer(member.id, ctx.message.created_at.timestamp(), period_time)
 
                 embed = Embed(color=0x0DDEFB,
-                              description=f"🎉 🎉 Xin chúc mừng <@!{member.id}> đã trúng vé ra đảo. 🎉 🎉")
+                              description=f"🎉 🎉 Xin chúc mừng <@!{member.id}> đã trúng vé cai nghiện. 🎉 🎉\n")
                 embed.set_author(name="Spammer Role Giveaway")
-                embed.add_field(name="Thời gian ra đảo", value=f"{period_time} phút")
+                embed.add_field(name="Thời gian cai nghiện", value=f"{period_time} phút")
 
                 await ctx.send(embed=embed)
 
