@@ -145,16 +145,16 @@ class PriceWatcher:
                 .send(embed=embed_message)
 
         # Send to spam channel
-        await self.discord_bot \
-            .get_guild(self.server_id) \
-            .get_channel(app_config.get_config("spam_channel")) \
-            .send(embed=embed_message)
+        # await self.discord_bot \
+        #     .get_guild(self.server_id) \
+        #     .get_channel(app_config.get_config("spam_channel")) \
+        #     .send(embed=embed_message)
 
         # Send to other coins channel
-        await self.discord_bot \
-            .get_guild(self.server_id) \
-            .get_channel(app_config.get_config("other_coins_channel")) \
-            .send(embed=embed_message)
+        # await self.discord_bot \
+        #     .get_guild(self.server_id) \
+        #     .get_channel(app_config.get_config("other_coins_channel")) \
+        #     .send(embed=embed_message)
 
     async def update_bot_price(self, pair):
         """
