@@ -89,7 +89,7 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
             latest_message = await ctx.channel.history(limit=200).flatten()
             member = random.choice(latest_message).author
             await member.add_roles(role)
-            spammer_repository.insert_to_db(ctx.message.author.id, ctx.message.created_at.timestamp())
+            spammer_repository.save_spammer(ctx.message.author.id, ctx.message.created_at.timestamp())
 
             embed = Embed(color=0x0DDEFB, description=f"🎉 🎉 Xin chúc mừng <@!{member.id}>🎉 🎉")
             embed.set_author(name="Spammer Giveaway")
@@ -102,7 +102,7 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
         if guild is not None:
             role = discord.utils.get(guild.roles, id=app_config.get_config("spammer_role"))
             if role is not None:
-                expired_spammers = spammer_repository.spammer_expired_time(600)
+                expired_spammers = spammer_repository.get_spammers_expired_time(600)
                 for spammer in expired_spammers:
                     member = guild.get_member(spammer['id'])
                     await member.remove_roles(role, reason="Auto remove role (from random spammer)")
