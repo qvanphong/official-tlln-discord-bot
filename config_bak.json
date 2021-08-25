@@ -10,5 +10,7 @@
   "btc_channel": 877141826476331030,
   "dash_channel": 877141826476331030,
   "other_coins_channel": 878465988201422940,
-  "spam_channel": 878465973341003777
+  "spam_channel": 878465973341003777,
+
+  "spammer_role": 820014402916581380
 }
