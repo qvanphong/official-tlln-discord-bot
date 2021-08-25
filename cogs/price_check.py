@@ -39,8 +39,7 @@ class PriceCheck(commands.Cog, name="Check giá", description="Các lệnh lấy
                                          rate_match.group(3),
                                          rate_match.group(5))
 
-    @commands.command(name="mk",
-                      brief="Lấy thông tin thị trường của 1 coin cụ thể",
+    @commands.command(name="mk", brief="Lấy thông tin thị trường của 1 coin cụ thể",
                       description="Nhập tên 1 coin cụ thể để lấy thông tin về thị trường của coin đó.\n"
                                   "VD: !mk neo")
     async def market_info(self, ctx, coin_name):
@@ -73,8 +72,7 @@ class PriceCheck(commands.Cog, name="Check giá", description="Các lệnh lấy
 
             await ctx.send(embed=embed)
 
-    @commands.command(name="rate",
-                      brief="Chuyển đổi rate giữa 2 coin khác nhau.",
+    @commands.command(name="rate", brief="Chuyển đổi rate giữa 2 coin khác nhau.",
                       description="Command này tương tự như xxx coin_a = coin_b.\n"
                                   "VD: !rate 10 gas neo (tương tự 10 gas = ? neo)\n"
                                   "VD: !rate gas neo (tương tự 1 gas = ? neo)")

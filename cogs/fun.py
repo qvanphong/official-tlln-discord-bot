@@ -19,8 +19,7 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
     async def on_ready(self):
         await self.remove_spammer_role_on_expire.start()
 
-    @commands.command(name="pick",
-                      brief="Chọn ngẫu nhiên các giá trị nhập vào",
+    @commands.command(name="pick", brief="Chọn ngẫu nhiên các giá trị nhập vào",
                       description="Chọn ngẫu nhiên bằng cách nhập các lựa chọn, được cách nhau bởi dấu \",\"\n"
                                   "VD: !pick ARK lên 30$, ARK stable coin")
     async def pick(self, ctx, *, arg):
@@ -65,22 +64,18 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
                                             commands.errors.MissingRequiredArgument(Parameter(name="emoji",
                                                                                               kind=Parameter.KEYWORD_ONLY)))
 
-    @commands.command(name="dh",
-                      brief="Tài liệu Duy Huỳnh")
+    @commands.command(name="dh", brief="Tài liệu Duy Huỳnh")
     async def duy_huynh(self, ctx):
         await ctx.send(">>> Tài liệu mới nhất của Duy Huỳnh:"
                        "https://cdn.discordapp.com/attachments/813452767099355136/859710887387987988"
                        "/DUY_HUYNH_By_Category.pdf")
 
-    @commands.command(name="tailieu",
-                      brief="Tài liệu đọc để Trở Lại Làm Người")
+    @commands.command(name="tailieu", brief="Tài liệu đọc để Trở Lại Làm Người")
     async def tailieu(self, ctx):
         await ctx.send(">>> Tài liệu về Stoic, Carl Jung, Duy Huỳnh, Nguyễn Duy Cần,... trên Trở lại làm người:"
                        "https://www.facebook.com/permalink.php?story_fbid=112580303705418&id=109294147367367")
 
-    @commands.command(name="randomcuck",
-                      brief="Random Cục",
-                      hidden=True)
+    @commands.command(name="randomcuck", brief="Random Cục", hidden=True)
     @commands.check_any(global_checker.is_dev(), global_checker.is_mod())
     async def random_cuck(self, ctx: commands.Context, amount=1):
         role = discord.utils.get(ctx.message.guild.roles, id=app_config.get_config("spammer_role"))
