@@ -31,7 +31,7 @@ class PriceCheck(commands.Cog, name="Check giá", description="Các lệnh lấy
                         .set_footer(text=f"Sử dụng !mk {coin_name} để xem thêm chi tiết")
                     await message.channel.send(embed=embed)
             else:
-                rate_match = re.search(r"^([1-9]+(\.[0-9]*)?)\s*([a-zA-Z0-9]+)\s*=\s*(\?|bn)\s*([a-zA-Z0-9]+)$",
+                rate_match = re.search(r"^([0-9]+(\.[0-9]*)?)\s*([a-zA-Z0-9]+)\s*=\s*(\?|bn)\s*([a-zA-Z0-9]+)$",
                                        message.content)
                 if rate_match is not None:
                     await self.coin_rate(message.channel,
