@@ -2,14 +2,22 @@ import random
 import re
 from inspect import Parameter
 
+import discord
 from discord import Embed
-from discord.ext import commands
+from discord.ext import commands, tasks
+from checkers import global_checker
+from repositories import spammer_repository
+from helpers import app_config
 
 
 class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta linh tinh"):
 
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        await self.remove_spammer_role_on_expire.start()
 
     @commands.command(name="pick",
                       brief="Chọn ngẫu nhiên các giá trị nhập vào",
@@ -70,6 +78,37 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
         await ctx.send(">>> Tài liệu về Stoic, Carl Jung, Duy Huỳnh, Nguyễn Duy Cần,... trên Trở lại làm người:"
                        "https://www.facebook.com/permalink.php?story_fbid=112580303705418&id=109294147367367")
 
+    @commands.command(name="randomcuck",
+                      brief="Random Cục",
+                      hidden=True)
+    @global_checker.in_channel(app_config.get_config("ark_channel"))
+    @commands.check_any(global_checker.is_dev(), commands.has_any_role(857151088687579147, 776478341271781387))
+    async def random_cuck(self, ctx: commands.Context):
+        role = discord.utils.get(ctx.message.guild.roles, id=app_config.get_config("spammer_role"))
+        if role is not None:
+            latest_message = await ctx.channel.history(limit=200).flatten()
+            member = random.choice(latest_message).author
+            await member.add_roles(role)
+            spammer_repository.insert_to_db(ctx.message.author.id, ctx.message.created_at.timestamp())
+
+            embed = Embed(color=0x0DDEFB, description=f"🎉 🎉 Xin chúc mừng <@!{member.id}>🎉 🎉")
+            embed.set_author(name="Spammer Giveaway")
+
+            await ctx.send(embed=embed)
+
+    @tasks.loop(seconds=5)
+    async def remove_spammer_role_on_expire(self):
+        guild = self.bot.get_guild(app_config.get_config("server_id"))
+        if guild is not None:
+            role = discord.utils.get(guild.roles, id=app_config.get_config("spammer_role"))
+            if role is not None:
+                expired_spammers = spammer_repository.spammer_expired_time(600)
+                for spammer in expired_spammers:
+                    member = guild.get_member(spammer['id'])
+                    await member.remove_roles(role, reason="Auto remove role (from random spammer)")
+                    spammer_repository.remove_spammer(spammer['id'])
+
 
 def setup(bot):
-    bot.add_cog(FunCog(bot))
+    fun_cog = FunCog(bot)
+    bot.add_cog(fun_cog)
