@@ -81,31 +81,50 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
     @commands.command(name="randomcuck",
                       brief="Random Cục",
                       hidden=True)
-    @global_checker.in_channel(app_config.get_config("ark_channel"))
-    @commands.check_any(global_checker.is_dev(), commands.has_any_role(857151088687579147, 776478341271781387))
-    async def random_cuck(self, ctx: commands.Context):
+    @commands.check_any(global_checker.is_dev(), global_checker.is_mod())
+    async def random_cuck(self, ctx: commands.Context, amount=1):
         role = discord.utils.get(ctx.message.guild.roles, id=app_config.get_config("spammer_role"))
         if role is not None:
             latest_message = await ctx.channel.history(limit=200).flatten()
-            member = random.choice(latest_message).author
-            await member.add_roles(role)
-            spammer_repository.save_spammer(ctx.message.author.id, ctx.message.created_at.timestamp())
+            selected_members = []
 
-            embed = Embed(color=0x0DDEFB, description=f"🎉 🎉 Xin chúc mừng <@!{member.id}>🎉 🎉")
-            embed.set_author(name="Spammer Giveaway")
+            for i in range(amount):
+                # Random minutes from 10 ~ 30
+                period_time = random.randint(app_config.get_config("min_spammer_role_period"),
+                                             app_config.get_config("max_spammer_role_period"))
+                member = random.choice(latest_message).author
 
-            await ctx.send(embed=embed)
+                # Don't select bot
+                while member.id == ctx.bot.user.id or member.id in selected_members:
+                    member = random.choice(latest_message).author
 
-    @tasks.loop(minutes=10)
+                # Add to selected_members array to prevent duplicate selection
+                selected_members.append(member.id)
+
+                await member.add_roles(role)
+
+                spammer_repository.save_spammer(member.id, ctx.message.created_at.timestamp(), period_time)
+
+                embed = Embed(color=0x0DDEFB,
+                              description=f"🎉 🎉 Xin chúc mừng <@!{member.id}> đã trúng vé ra đảo. 🎉 🎉")
+                embed.set_author(name="Spammer Role Giveaway")
+                embed.add_field(name="Thời gian ra đảo", value=f"{period_time} phút")
+
+                await ctx.send(embed=embed)
+
+    @tasks.loop(minutes=1)
     async def remove_spammer_role_on_expire(self):
         guild = self.bot.get_guild(app_config.get_config("server_id"))
         if guild is not None:
             role = discord.utils.get(guild.roles, id=app_config.get_config("spammer_role"))
             if role is not None:
-                expired_spammers = spammer_repository.get_spammers_expired_time(600)
+                expired_spammers = spammer_repository.get_spammers_expired_time()
                 for spammer in expired_spammers:
                     member = guild.get_member(spammer['id'])
                     await member.remove_roles(role, reason="Auto remove role (from random spammer)")
+
+                    print(f"Removed role for {member.name}")
+
                     spammer_repository.remove_spammer(spammer['id'])
 
 
