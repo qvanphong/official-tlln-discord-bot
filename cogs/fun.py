@@ -96,7 +96,7 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
 
             await ctx.send(embed=embed)
 
-    @tasks.loop(seconds=5)
+    @tasks.loop(minutes=10)
     async def remove_spammer_role_on_expire(self):
         guild = self.bot.get_guild(app_config.get_config("server_id"))
         if guild is not None:
