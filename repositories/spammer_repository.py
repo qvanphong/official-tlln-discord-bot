@@ -15,7 +15,7 @@ def save_spammer(user_id, time, period_time):
         return db.update({'id': user_id, 'time': time, 'period_time': period_time}, spammer.id == user_id)
 
 
-def get_spammers_expired_time():
+def get_expired_spammer():
     current_timestamp = datetime.now().timestamp()
     result_set = db.search(spammer.time <= (current_timestamp - app_config.get_config("min_spammer_role_period") * 60))
     result = []
@@ -25,6 +25,9 @@ def get_spammers_expired_time():
             result.append(r)
 
     return result
+
+def get_all():
+    return db.all()
 
 
 def remove_spammer(id):

@@ -79,7 +79,8 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
     @commands.check_any(global_checker.is_dev(), global_checker.is_mod())
     async def random_cuck(self, ctx: commands.Context, amount=1):
         if amount > 10:
-            await ctx.send("vl! Ông định giết cả box này à <:angry:776921998999027733><:sung:827892224851312651>")
+            await ctx.send(
+                f"vl <@!{ctx.message.author.id}>! Ông định giết cả box này à <:angry:776921998999027733><:sung:827892224851312651>")
             return
 
         role = discord.utils.get(ctx.message.guild.roles, id=app_config.get_config("spammer_role"))
@@ -116,8 +117,25 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
                               description=f"🎉 🎉 Xin chúc mừng <@!{member.id}> đã trúng vé cai nghiện. 🎉 🎉\n")
                 embed.set_author(name="Spammer Role Giveaway")
                 embed.add_field(name="Thời gian cai nghiện", value=f"{period_time} phút")
+                embed.add_field(name="Người tặng vé cai nghiện", value=f"<@!{ctx.message.author.id}>")
 
                 await ctx.send(embed=embed)
+
+    @commands.command(name="removerandomcuck", brief="Random Cục", hidden=True)
+    @commands.check_any(global_checker.is_dev(), global_checker.is_mod())
+    async def remove_randomcuck(self, ctx):
+        guild = ctx.bot.get_guild(app_config.get_config("server_id"))
+        if guild is not None:
+            role = discord.utils.get(guild.roles, id=app_config.get_config("spammer_role"))
+            if role is not None:
+                spammers = spammer_repository.get_all()
+                for spammer in spammers:
+                    member = guild.get_member(spammer['id'])
+                    await member.remove_roles(role, reason="Auto remove role (from random spammer from !removerandomcuck)")
+
+                    print(f"Removed role for {member.name}")
+
+                    spammer_repository.remove_spammer(spammer['id'])
 
     @tasks.loop(minutes=1)
     async def remove_spammer_role_on_expire(self):
@@ -125,7 +143,7 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
         if guild is not None:
             role = discord.utils.get(guild.roles, id=app_config.get_config("spammer_role"))
             if role is not None:
-                expired_spammers = spammer_repository.get_spammers_expired_time()
+                expired_spammers = spammer_repository.get_expired_spammer()
                 for spammer in expired_spammers:
                     member = guild.get_member(spammer['id'])
                     await member.remove_roles(role, reason="Auto remove role (from random spammer)")
