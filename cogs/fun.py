@@ -141,23 +141,21 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
     @commands.command(name="poll", brief="Tạo một cuộc bình chọn ý kiến",
                       description="!poll <câu hỏi> <lựa chọn A>  <lựa chọn C>  <lựa chọn B>... (Tối đa 10 lựa chọn).\n"
                                   "VD: !poll \"ARK lên bao nhiêu cuối cycle\" \"30$\" \"10$\"")
-    async def pool(self, ctx: commands.Context, *args):
-        if len(args) - 1 < 2:
+    async def pool(self, ctx, question, *options):
+        if len(options) < 2:
             await self.bot.on_command_error(ctx,
                                             commands.errors.MissingRequiredArgument(
-                                                Parameter(name="question_or_options",
+                                                Parameter(name="options",
                                                           kind=Parameter.KEYWORD_ONLY)))
             return
 
-        if len(args) - 1 > 10:
+        if len(options) > 10:
             await ctx.send("Hỗ trợ tối đa 10 lựa chọn thôi, nên bớt lại ik <:nhutnhat:776923082064527370>")
             return
 
         # Delete using command message.
         await ctx.message.delete()
 
-        question = args[0]
-        options = args[1:]
         reaction_emojis = []
 
         question_title = f"📊 **{question} ❓**"
