@@ -183,7 +183,6 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
                       description='Click the 💰 Reaction below to receive **1 Ѧ**\n'
                                   'The Giveaway is limited to **1** Users so be quick!')
         embed.set_author(name=author.name, icon_url=author.avatar_url)
-        embed.set_thumbnail(url=author.avatar_url)
         embed.add_field(name="Remaining Users", value="**1**", inline=True)
         embed.add_field(name="Remaining Time", value="**5:00** Minutes", inline=True)
         embed.add_field(name="Lucky Users", value="None yet!", inline=False)
