@@ -191,9 +191,13 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
 
     @commands.command(name="t", hidden=True)
     @commands.check_any(global_checker.is_dev(), global_checker.is_mod())
-    async def anonymous_message(self, ctx, *, text):
+    async def anonymous_message(self, ctx, channel, *, text):
+        channel_id = int(channel.replace("<#", "").replace(">", ""))
         await ctx.message.delete()
-        await ctx.send(text)
+        await self.bot \
+            .get_guild(app_config.get_config("server_id")) \
+            .get_channel(channel_id) \
+            .send(text)
 
     @tasks.loop(minutes=1)
     async def remove_spammer_role_on_expire(self):
