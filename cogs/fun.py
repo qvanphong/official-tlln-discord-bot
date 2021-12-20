@@ -104,22 +104,24 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
                     selected_members.append(selected_member)
                     users.remove(selected_member)
 
-            for member in selected_members:
-                # Random minutes from 10 ~ 30
-                period_time = random.randint(app_config.get_config("min_spammer_role_period"),
-                                             app_config.get_config("max_spammer_role_period"))
+            cuc_members_str = ""
+            # Random minutes from 10 ~ 30
+            period_time = random.randint(app_config.get_config("min_spammer_role_period"),
+                                         app_config.get_config("max_spammer_role_period"))
 
+            for member in selected_members:
+                spammer_repository.save_spammer(member.id, ctx.message.created_at.timestamp(), period_time)
+                cuc_members_str = f"<@!{member.id}>"
                 await member.add_roles(role)
 
-                spammer_repository.save_spammer(member.id, ctx.message.created_at.timestamp(), period_time)
+            embed = Embed(color=0x0DDEFB,
+                          description=f"🎉 🎉 Mày hả bưởi? Đi cai nghiện ngay! 🎉 🎉\n")
+            embed.set_author(name="Spammer Role Giveaway")
+            embed.add_field(name="Con nghiện(s)", value=cuc_members_str)
+            embed.add_field(name="Thời gian cai nghiện", value=f"{period_time} phút")
+            embed.add_field(name="Người tặng vé cai nghiện", value=f"<@!{ctx.message.author.id}>")
 
-                embed = Embed(color=0x0DDEFB,
-                              description=f"🎉 🎉 Xin chúc mừng <@!{member.id}> đã trúng vé cai nghiện. 🎉 🎉\n")
-                embed.set_author(name="Spammer Role Giveaway")
-                embed.add_field(name="Thời gian cai nghiện", value=f"{period_time} phút")
-                embed.add_field(name="Người tặng vé cai nghiện", value=f"<@!{ctx.message.author.id}>")
-
-                await ctx.send(embed=embed)
+            await ctx.send(embed=embed)
 
     @commands.command(name="removerandomcuck", brief="Xóa những member bị dính random Cục", hidden=True)
     @commands.check_any(global_checker.is_dev(), global_checker.is_mod())
