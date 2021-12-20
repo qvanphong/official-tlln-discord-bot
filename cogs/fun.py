@@ -111,7 +111,7 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
 
             for member in selected_members:
                 spammer_repository.save_spammer(member.id, ctx.message.created_at.timestamp(), period_time)
-                cuc_members_str += f"<@!{member.id}>"
+                cuc_members_str += f"<@!{member.id}> "
                 await member.add_roles(role)
 
             embed = Embed(color=0x0DDEFB,
