@@ -115,9 +115,8 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
                 await member.add_roles(role)
 
             embed = Embed(color=0x0DDEFB,
-                          description=f"🎉 🎉 Mày hả bưởi? Đi cai nghiện ngay! 🎉 🎉\n")
+                          description=f"🎉 🎉 Mày hả bưởi? Đi cai nghiện ngay! 🎉 🎉\n{cuc_members_str}")
             embed.set_author(name="Spammer Role Giveaway")
-            embed.add_field(name="Con nghiện(s)", value=cuc_members_str)
             embed.add_field(name="Thời gian cai nghiện", value=f"{period_time} phút")
             embed.add_field(name="Người tặng vé cai nghiện", value=f"<@!{ctx.message.author.id}>")
 
@@ -176,20 +175,20 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
         for emoji in reaction_emojis:
             await sent_poll_message.add_reaction(emoji)
 
-    # @commands.command(name="fakecoingiveaway")
-    # async def fake_coingiveaway(self, ctx):
-    #     await ctx.message.delete()
-    #
-    #     author = ctx.message.author
-    #     embed = Embed(title=f"{author.name} has set up a Coin Giveaway!",
-    #                   description='Click the 💰 Reaction below to receive **1 Ѧ**\n'
-    #                               'The Giveaway is limited to **1** Users so be quick!')
-    #     embed.set_author(name=author.name, icon_url=author.avatar_url)
-    #     embed.add_field(name="Remaining Users", value="**1**", inline=True)
-    #     embed.add_field(name="Remaining Time", value="**5:00** Minutes", inline=True)
-    #     embed.add_field(name="Lucky Users", value="None yet!", inline=False)
-    #     message = await ctx.send(embed=embed)
-    #     await message.add_reaction('💰')
+    @commands.command(name="fakecoingiveaway")
+    async def fake_coingiveaway(self, ctx):
+        await ctx.message.delete()
+
+        author = ctx.message.author
+        embed = Embed(title=f"{author.name} has set up a Coin Giveaway!",
+                      description='Click the 💰 Reaction below to receive **1 Ѧ**\n'
+                                  'The Giveaway is limited to **1** Users so be quick!')
+        embed.set_author(name=author.name, icon_url=author.avatar_url)
+        embed.add_field(name="Remaining Users", value="**1**", inline=True)
+        embed.add_field(name="Remaining Time", value="**5:00** Minutes", inline=True)
+        embed.add_field(name="Lucky Users", value="None yet!", inline=False)
+        message = await ctx.send(embed=embed)
+        await message.add_reaction('💰')
 
     @commands.command(name="t", hidden=True)
     @commands.check_any(global_checker.is_dev(), global_checker.is_mod())
