@@ -8,7 +8,7 @@ from discord.ext import commands, tasks
 from checkers import global_checker
 from repositories import spammer_repository
 from helpers import app_config, fun_cog_helper
-
+import asyncio
 
 class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta linh tinh"):
 
@@ -199,6 +199,23 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
             .get_guild(app_config.get_config("server_id")) \
             .get_channel(channel_id) \
             .send(text)
+
+    @commands.command(name="xoibac", hidden=True)
+    async def xoibac(self, ctx):
+        items = ["Pill", "Nứa", "Fancao", "Đức Mèo", "Hương", "Việt Mẽo"]
+        selected = []
+        for i in range(3):
+            random_selected = items[random.randint(0, len(items) - 1)]
+            selected.append(random_selected)
+
+            embed = Embed(title=f"Kết quả xới bạc lần {i + 1}", description=random_selected)
+            await ctx.send(embed=embed)
+
+            await asyncio.sleep(7 if i != 2 else 2)
+
+
+        embed = Embed(title="Kết quả xới bạc", description='\n'.join(selected))
+        await ctx.send(embed=embed)
 
     @tasks.loop(minutes=1)
     async def remove_spammer_role_on_expire(self):
