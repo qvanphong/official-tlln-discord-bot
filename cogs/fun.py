@@ -211,7 +211,7 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
             embed = Embed(title=f"Kết quả xới bạc lần {i + 1}", description=random_selected)
             await ctx.send(embed=embed)
 
-            await asyncio.sleep(7 if i != 2 else 2)
+            await asyncio.sleep(5 if i != 2 else 0)
 
 
         embed = Embed(title="Kết quả xới bạc", description='\n'.join(selected))
