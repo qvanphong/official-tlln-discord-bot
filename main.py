@@ -18,7 +18,8 @@ intents.messages = True
 
 initial_cog = [
     "cogs.fun",
-    "cogs.price_check"
+    "cogs.price_check",
+    "cogs.random_number"
 ]
 
 bot = commands.Bot(command_prefix='!', intents=intents)
