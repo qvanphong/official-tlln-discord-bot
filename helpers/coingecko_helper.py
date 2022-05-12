@@ -17,7 +17,7 @@ class CoinGeckoHelper():
         self.coin_list['usd'] = 'tether'
         self.coin_list['vnd'] = 'binance-vnd'
         self.coin_list['gas'] = 'gas'
-        self.coin_list['gas'] = 'terra-luna'
+        self.coin_list['luna'] = 'terra-luna'
 
     def fetch_coin_info(self, symbol) -> Optional[CoinGeckoCoin]:
         if symbol in self.coin_list:
