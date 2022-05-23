@@ -197,7 +197,7 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
         await ctx.message.delete()
         await self.bot \
             .get_guild(app_config.get_config("server_id")) \
-            .get_channel(channel_id) \
+            .get_channel_or_thread(channel_id) \
             .send(text)
 
     @commands.command(name="xoibac", hidden=True)
