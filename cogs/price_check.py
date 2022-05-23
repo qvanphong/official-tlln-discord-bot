@@ -101,5 +101,5 @@ class PriceCheck(commands.Cog, name="Check giá", description="Các lệnh lấy
         await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(PriceCheck(bot))
+async def setup(bot):
+    await bot.add_cog(PriceCheck(bot))

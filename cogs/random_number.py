@@ -102,6 +102,6 @@ class RandomNumberCog(commands.Cog, name="Chọn số ngẫu nhiên", descriptio
         return -1
 
 
-def setup(bot):
+async def setup(bot):
     fun_cog = RandomNumberCog(bot)
-    bot.add_cog(fun_cog)
+    await bot.add_cog(fun_cog)

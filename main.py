@@ -1,3 +1,4 @@
+import asyncio
 import os
 import platform
 import sys
@@ -12,9 +13,7 @@ from helpers import app_config, watcher_config
 from tasks.price_watcher import PriceWatcher
 
 intents = discord.Intents.default()
-intents.members = True  # Subscribe to the privileged members intent.
-intents.guilds = True
-intents.messages = True
+intents.message_content = True
 
 initial_cog = [
     "cogs.fun",
@@ -23,9 +22,6 @@ initial_cog = [
 ]
 
 bot = commands.Bot(command_prefix='!', intents=intents)
-
-for cog in initial_cog:
-    bot.load_extension(cog)
 
 price_watcher: PriceWatcher = None
 
@@ -80,4 +76,11 @@ async def on_command_error(ctx, error):
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
 
-bot.run(app_config.get_config("token"))
+async def main():
+    async with bot:
+        for cog in initial_cog:
+            await bot.load_extension(cog)
+        await bot.start(app_config.get_config("token"))
+
+
+asyncio.run(main())

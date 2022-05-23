@@ -45,7 +45,7 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
             await ctx.send("`Không tìm thấy người được tag`")
         else:
             user_tagged = ctx.message.mentions[0]
-            avatar = user_tagged.avatar_url
+            avatar = user_tagged.avatar
 
             await ctx.send(avatar)
 
@@ -233,6 +233,6 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
                     spammer_repository.remove_spammer(spammer['id'])
 
 
-def setup(bot):
+async def setup(bot):
     fun_cog = FunCog(bot)
-    bot.add_cog(fun_cog)
+    await bot.add_cog(fun_cog)
