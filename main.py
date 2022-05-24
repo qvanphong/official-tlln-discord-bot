@@ -14,6 +14,8 @@ from tasks.price_watcher import PriceWatcher
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.guilds = True
+intents.members = True
 
 initial_cog = [
     "cogs.fun",
