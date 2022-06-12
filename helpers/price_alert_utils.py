@@ -26,14 +26,6 @@ coin_bots_info = {
             'image': watcher.get_config("btc_image_url"),
             'bot_id': watcher.get_config("btc_bot_id")},
 
-    'ZEN': {'channel': app.get_config("zen_channel"),
-            'image': watcher.get_config("zen_image_url"),
-            'bot_id': watcher.get_config("zen_bot_id")},
-
-    'DASH': {'channel': app.get_config("dash_channel"),
-             'image': watcher.get_config("dash_image_url"),
-             'bot_id': watcher.get_config("dash_bot_id")},
-
     'ARK': {'channel': app.get_config("ark_channel"),
             'image': watcher.get_config("ark_image_url"),
             'bot_id': watcher.get_config("ark_bot_id")},
