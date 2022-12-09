@@ -193,8 +193,8 @@ class PriceWatcher:
                 if coin_name == "BTC":
                     self.btc_price = coin_info.price
 
-                value['value'] = await self.compare_and_send(coin_name=coin_name,
-                                                             coin_info=coin_info,
-                                                             currency=currency)
+                # value['value'] = await self.compare_and_send(coin_name=coin_name,
+                #                                             coin_info=coin_info,
+                #                                             currency=currency)
 
                 await self.update_bot_price(pair=pair)
