@@ -95,14 +95,14 @@ class PriceWatcher:
         price_status, difference = self.has_difference(old_price_usd, new_price_usd)
 
         # If price status is PUMP or DUMP, then send a message
-        if price_status != PriceStatus.NOTHING:
-            price_db.insert_to_db(coin_name, current_price, coin_info.time)
-            await self.send_price_alert(coin_name=coin_name,
-                                        old_price=old_price_usd,
-                                        new_price=new_price_usd,
-                                        change_in_24=coin_info.change_24h,
-                                        price_status=price_status,
-                                        difference=difference)
+        # if price_status != PriceStatus.NOTHING:
+        #    price_db.insert_to_db(coin_name, current_price, coin_info.time)
+        #    await self.send_price_alert(coin_name=coin_name,
+        #                                old_price=old_price_usd,
+        #                                new_price=new_price_usd,
+        #                                change_in_24=coin_info.change_24h,
+        #                                price_status=price_status,
+        #                                difference=difference)
         return new_price_usd
 
     async def send_price_alert(self, coin_name: str, old_price: float, new_price: float, change_in_24: str,
@@ -193,8 +193,8 @@ class PriceWatcher:
                 if coin_name == "BTC":
                     self.btc_price = coin_info.price
 
-                # value['value'] = await self.compare_and_send(coin_name=coin_name,
-                #                                             coin_info=coin_info,
-                #                                             currency=currency)
+                value['value'] = await self.compare_and_send(coin_name=coin_name,
+                                                            coin_info=coin_info,
+                                                            currency=currency)
 
                 await self.update_bot_price(pair=pair)
