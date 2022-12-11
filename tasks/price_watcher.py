@@ -38,7 +38,7 @@ class PriceWatcher:
              'ZENUSDT': {'name': 'ZEN', 'value': 0.0},
              'DASHUSDT': {'name': 'DASH', 'value': 0.0},
              'GASBTC': {'name': 'GAS', 'value': 0.0},
-             'ARKBTC': {'name': 'ARK', 'value': 0.0},
+             'ARKBUSD': {'name': 'ARK', 'value': 0.0},
              'ETHUSDT': {'name': 'ETH', 'value': 0.0},
              }  # List of support coins, name stand for correct coin name, value stand for latest price.
 
