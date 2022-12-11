@@ -55,7 +55,8 @@ class PriceWatcher:
                 1 is pump_or_dump is PriceStatus enum.
                 2 is difference percentage
         """
-        if ((old_price + current_price) / 2 == 0) return [PriceStatus.NOTHING, 0]
+        if ((old_price + current_price) / 2 == 0) 
+            return [PriceStatus.NOTHING, 0]
         difference = abs(old_price - current_price) / ((old_price + current_price) / 2) * 100
 
         if difference < self.difference_percentage:
