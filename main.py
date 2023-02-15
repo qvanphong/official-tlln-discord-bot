@@ -10,6 +10,7 @@ from pretty_help import PrettyHelp, DefaultMenu
 
 from checkers import global_checker
 from helpers import app_config, watcher_config
+from tasks.cex_gas_balance_watcher import CEXGasBalanceWatcher
 from tasks.price_watcher import PriceWatcher
 
 intents = discord.Intents.default()
@@ -26,6 +27,7 @@ initial_cog = [
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 price_watcher: PriceWatcher = None
+cexGasBalanceWatcher: CEXGasBalanceWatcher = None
 
 menu = DefaultMenu('◀️', '▶️', '❌', 10)
 
@@ -47,9 +49,18 @@ async def on_ready():
     print(f"Running on: {platform.system()} {platform.release()} ({os.name})")
     print("-------------------")
 
-    global price_watcher
+    global price_watcher, cexGasBalanceWatcher
     price_watcher = PriceWatcher(bot=bot)
     price_watcher_task.start()
+
+    cexGasBalanceWatcher = CEXGasBalanceWatcher(bot=bot)
+    cex_gas_balance_watcher.start()
+    await cexGasBalanceWatcher.update_balance(first_init=True)
+
+@tasks.loop(hours=1)
+async def cex_gas_balance_watcher():
+    global cexGasBalanceWatcher
+    await cexGasBalanceWatcher.update_balance()
 
 
 @tasks.loop(seconds=watcher_config.get_config("update_coinbot_interval"))

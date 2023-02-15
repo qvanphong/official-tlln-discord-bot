@@ -9,7 +9,7 @@ discord.py @ git+https://github.com/Rapptz/discord.py@3dddddc8f95494c93ab4696672
 emoji==1.2.0
 emojis==0.6.0
 idna==2.10
-multidict==5.1.0
+multidict==6.0.3
 nanoid==2.0.0
 numpy==1.21.1
 opencv-python==4.5.3.56
@@ -21,4 +21,4 @@ tinydb==4.5.0
 tornado==6.1
 typing-extensions==3.10.0.0
 urllib3==1.26.6
-yarl==1.6.3
+yarl==1.8.2
