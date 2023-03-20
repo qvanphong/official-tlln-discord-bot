@@ -44,7 +44,7 @@ class CEXGasBalanceWatcher:
             "previous_balance": None,
             "balance": None,
             "symbol": "GAS"
-        }
+        },
         {
             "cex_name": "Upbit",
             "address": "NhWXj9JfCsF4X6v5ahzHrRH8PQHnrfB8FT",
