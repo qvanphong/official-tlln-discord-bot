@@ -175,7 +175,7 @@ class PriceWatcher:
         price: float = self.coins[pair]['value']
         if bot is not None and price is not None and price != 0.0:
             try:
-                await bot.edit(nick="{name} ${price:.2f}".format(name=bot.name, price=price))
+                await bot.edit(nick="{name} ${price:.2f}".format(name=bot.name, price=price * 100))
             except Exception as e:
                 print(f"Error occurs: {e}")
 
