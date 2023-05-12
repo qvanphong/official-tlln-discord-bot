@@ -129,6 +129,18 @@ async def on_bookmark(interaction: discord.Interaction, message: discord.Message
                                          "<:phonglon:872123547865198673>")
 
 
+@bot.tree.context_menu(name="Unbookmark")
+async def on_unbookmark(interaction: discord.Interaction, message: discord.Message):
+    await interaction.response.defer(ephemeral=True)
+    original_resp = await interaction.original_response()
+
+    if message.author.id == bot.user.id:
+        await message.delete()
+        await original_resp.edit(content="✅ Đã xoá bookmark")
+    else:
+        await original_resp.edit(content="❌ Chỉ dùng chức năng này trên chính tin nhắn của bot trong inbox")
+
+
 async def main():
     async with bot:
         for cog in initial_cog:
