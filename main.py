@@ -62,7 +62,7 @@ async def on_ready():
     await cexGasBalanceWatcher.update_balance(first_init=True)
 
 
-@tasks.loop(seconds=5)
+@tasks.loop(seconds=3600)
 async def cex_gas_balance_watcher():
     global cexGasBalanceWatcher
     await cexGasBalanceWatcher.update_balance()
