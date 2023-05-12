@@ -102,6 +102,7 @@ async def on_bookmark(interaction: discord.Interaction, message: discord.Message
     guild_id = message.channel.guild.id
     channel_id = message.channel.id
     msg_id = message.id
+    author_id = message.author.id
 
     dm_ch = interaction.user.dm_channel
     if dm_ch is None:
@@ -112,7 +113,7 @@ async def on_bookmark(interaction: discord.Interaction, message: discord.Message
 
         if len(message.attachments) > 0:
             for attachment in message.attachments:
-                msg += "[Image] " + attachment.url + "\n"
+                msg += "[Attachment] " + attachment.url + "\n"
 
         if len(message.stickers) > 0:
             for sticker in message.stickers:
@@ -120,6 +121,7 @@ async def on_bookmark(interaction: discord.Interaction, message: discord.Message
 
         embed = Embed(color=0x0DDEFB, title="Bookmark 🔖")
         embed.add_field(name="Tin nhắn", value=f"https://discord.com/channels/{guild_id}/{channel_id}/{msg_id}")
+        embed.add_field(name="Tác giả", value=f"<@!{author_id}>")
         embed.add_field(name="Nội dung", value=msg, inline=False)
 
         await dm_ch.send(embed=embed)
