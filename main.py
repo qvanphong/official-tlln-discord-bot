@@ -99,32 +99,25 @@ async def on_bookmark(interaction: discord.Interaction, message: discord.Message
     await interaction.response.defer(ephemeral=True)
     original_resp = await interaction.original_response()
 
-    guild_id = message.channel.guild.id
-    channel_id = message.channel.id
-    msg_id = message.id
-    author_id = message.author.id
-
     dm_ch = interaction.user.dm_channel
     if dm_ch is None:
         dm_ch = await interaction.user.create_dm()
 
     try:
-        msg = message.content + "\n"
+        [full_msg_content, msg_content, attachment_content, stickers_content] = to_bookmark_content(message)
+        if len(full_msg_content) <= 2000:  # if message content size is not reach Discord's limit
+            await send_embed_style_bookmark(full_msg_content, message, dm_ch)
+        elif len(msg_content) <= 2000:   # if the only message content is not reach Discord's limit, separate it with attachment & sticker
+            await send_embed_style_bookmark(msg_content, message, dm_ch, 1, 2)
 
-        if len(message.attachments) > 0:
-            for attachment in message.attachments:
-                msg += "[Attachment] " + attachment.url + "\n"
+            attachment_and_sticker_content = attachment_content + stickers_content
+            await send_embed_style_bookmark(attachment_and_sticker_content, message, dm_ch, 2, 2)
+        else:
+            # Split message into small part then send
+            await send_embed_style_bookmark("[ Nội dung dài nên sẽ được gửi ở dạng tin nhắn phía dưới, nếu không thấy "
+                                            "tin nhắn thì là bug, mà bug thì hú thằng fonk đi 🐔]", message, dm_ch)
+            await send_raw_style_bookmark(msg_content, attachment_content, stickers_content, dm_ch)
 
-        if len(message.stickers) > 0:
-            for sticker in message.stickers:
-                msg += "[Image] " + sticker.url + "\n"
-
-        embed = Embed(color=0x0DDEFB, title="Bookmark 🔖")
-        embed.add_field(name="Tin nhắn", value=f"https://discord.com/channels/{guild_id}/{channel_id}/{msg_id}")
-        embed.add_field(name="Tác giả", value=f"<@!{author_id}>")
-        embed.add_field(name="Nội dung", value=msg, inline=False)
-
-        await dm_ch.send(embed=embed)
         await original_resp.edit(content="Đã gửi nội dung bookmark, check in bốc <:Happy:776922281871015966>")
     except discord.Forbidden:
         await original_resp.edit(content="Không gửi được tin nhắn, mở cho phép inbox riêng đi cha nội "
@@ -142,6 +135,90 @@ async def on_unbookmark(interaction: discord.Interaction, message: discord.Messa
     else:
         await original_resp.edit(content="❌ Chỉ dùng chức năng này trên chính tin nhắn của bot trong inbox")
 
+
+def to_bookmark_content(message: discord.Message):
+    msg_content = message.content
+    full_msg_content = message.content + "\n"
+    attachment_content = ''
+    stickers_content = ''
+
+    if len(message.attachments) > 0:
+        for attachment in message.attachments:
+            attachment_content += "[Attachment] " + attachment.url + "\n"
+            full_msg_content += "[Attachment] " + attachment.url + "\n"
+
+    if len(message.stickers) > 0:
+        for sticker in message.stickers:
+            stickers_content += "[Image] " + sticker.url + "\n"
+            full_msg_content += "[Image] " + sticker.url + "\n"
+
+    return [full_msg_content, msg_content, attachment_content, stickers_content]
+
+
+async def send_embed_style_bookmark(msg_content,
+                                    message: discord.Message,
+                                    dm_channel,
+                                    bookmark_part=None,
+                                    total_bookmark_part=None):
+    guild_id = message.channel.guild.id
+    channel_id = message.channel.id
+    msg_id = message.id
+    author_id = message.author.id
+
+    part = f"{bookmark_part}/{total_bookmark_part}" if bookmark_part is not None and total_bookmark_part is not None else ""
+    title = f"Bookmark 🔖 {part}"
+
+    embed = Embed(color=0x0DDEFB, title=title)
+    embed.add_field(name="Tin nhắn", value=f"https://discord.com/channels/{guild_id}/{channel_id}/{msg_id}")
+    embed.add_field(name="Tác giả", value=f"<@!{author_id}>")
+    embed.add_field(name="Nội dung", value=msg_content, inline=False)
+
+    await dm_channel.send(embed=embed)
+
+
+async def send_raw_style_bookmark(msg_content: str,
+                                  attachment_content: str,
+                                  stickers_content: str,
+                                  dm_channel):
+    max_msg_part_character = 1400
+
+    from_index = 0
+    to_index = max_msg_part_character  # max character to split into parts
+
+    msg_parts = []
+
+    anti_loop = 10
+    loop_time = 0
+
+    while True:
+        part = msg_content[from_index:to_index]
+
+        if to_index >= len(msg_content):
+            msg_parts.append(part)
+            break
+        else:
+            try:
+                last_space_index = part.rindex(" ")
+                from_index = last_space_index
+                to_index = from_index + max_msg_part_character
+
+                part = part[0:last_space_index]
+            except ValueError:
+                # no space character
+                from_index = to_index
+                to_index = from_index + max_msg_part_character
+
+            msg_parts.append(part)
+
+        loop_time += 1
+        if loop_time >= anti_loop:
+            break
+
+    for index, msg_part in enumerate(msg_parts):
+        await dm_channel.send(msg_part)
+
+    if len(attachment_content) > 0 or len(stickers_content) > 0:
+        await dm_channel.send(attachment_content + stickers_content)
 
 async def main():
     async with bot:
