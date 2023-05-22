@@ -105,9 +105,9 @@ async def on_bookmark(interaction: discord.Interaction, message: discord.Message
 
     try:
         [full_msg_content, msg_content, attachment_content, stickers_content] = to_bookmark_content(message)
-        if len(full_msg_content) <= 2000:  # if message content size is not reach Discord's limit
+        if len(full_msg_content) <= 1400:  # if message content size is not reach Discord's limit
             await send_embed_style_bookmark(full_msg_content, message, dm_ch)
-        elif len(msg_content) <= 2000:   # if the only message content is not reach Discord's limit, separate it with attachment & sticker
+        elif len(msg_content) <= 1400:   # if the only message content is not reach Discord's limit, separate it with attachment & sticker
             await send_embed_style_bookmark(msg_content, message, dm_ch, 1, 2)
 
             attachment_and_sticker_content = attachment_content + stickers_content
