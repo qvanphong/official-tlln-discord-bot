@@ -66,7 +66,7 @@ class FunCog(commands.Cog, name="Linh tinh", description="Các lệnh linh ta li
 
     @commands.command(name="dh", brief="Tài liệu Duy Huỳnh")
     async def duy_huynh(self, ctx):
-        await ctx.send(">>> Tài liệu mới nhất của Duy Huỳnh:"
+        await ctx.send(">>> Tài liệu mới nhất của Duy Huỳnh: "
                        "https://cdn.discordapp.com/attachments/813452767099355136/859710887387987988"
                        "/DUY_HUYNH_By_Category.pdf")
 
