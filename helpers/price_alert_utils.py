@@ -34,9 +34,9 @@ coin_bots_info = {
              'image': watcher.get_config("dash_image_url"),
              'bot_id': watcher.get_config("dash_bot_id")},
 
-    'ARK': {'channel': app.get_config("ark_channel"),
+    'FLM': {'channel': None,
             'image': watcher.get_config("ark_image_url"),
-            'bot_id': watcher.get_config("ark_bot_id")},
+            'bot_id': watcher.get_config("flm_bot_id")},
 
     'ETH': {'channel': None,
             'image': watcher.get_config("eth_image_url"),

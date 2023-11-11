@@ -38,7 +38,7 @@ class PriceWatcher:
              'ZENUSDT': {'name': 'ZEN', 'value': 0.0},
              'DASHUSDT': {'name': 'DASH', 'value': 0.0},
              'GASBTC': {'name': 'GAS', 'value': 0.0},
-             'ARKBUSD': {'name': 'ARK', 'value': 0.0},
+             'FLMUSDT': {'name': 'FLM', 'value': 0.0},
              'ETHUSDT': {'name': 'ETH', 'value': 0.0},
              }  # List of support coins, name stand for correct coin name, value stand for latest price.
 
@@ -175,7 +175,10 @@ class PriceWatcher:
         price: float = self.coins[pair]['value']
         if bot is not None and price is not None and price != 0.0:
             try:
-                await bot.edit(nick="{name} ${price:.2f}".format(name=bot.name, price=price))
+                if price < 1.0:
+                    await bot.edit(nick="{name} ${price:.3f}".format(name=bot.name, price=price))
+                else:
+                    await bot.edit(nick="{name} ${price:.2f}".format(name=bot.name, price=price))
             except Exception as e:
                 print(f"Error occurs: {e}")
 
